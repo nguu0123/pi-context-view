@@ -19,7 +19,7 @@ import {
 	reportCommandMessage,
 	reportCompactionInProgress,
 	reportConfigCreation,
-	reportTuiOnly,
+	reportUnsupportedMode,
 	reportUnsupportedPi,
 	type RequestSnapshotResult,
 	resolveRequestSnapshot,
@@ -37,6 +37,7 @@ import { createProbeView } from "./probe/view.ts";
 import { applyRequestSnapshot } from "./projection.ts";
 import { collectPromptSources } from "./prompt-additions.ts";
 import { buildUsageSnapshot } from "./replay.ts";
+import { showRpcInjections, showRpcUsage } from "./rpc.ts";
 import { readAutoCompactReserveTokens } from "./settings.ts";
 import { SnapshotStore } from "./snapshot.ts";
 import { showInjectionsView } from "./ui/injections-view.ts";
@@ -62,8 +63,9 @@ export default function (pi: ExtensionAPI, snapshots = new SnapshotStore(), conf
 		latest: RequestSnapshotResult,
 		loadedConfig: ConfigLoadResult,
 	): Promise<void> {
+		const show = ctx.mode === "rpc" ? showRpcInjections : showInjectionsView;
 		if (latest.type !== "snapshot") {
-			await showInjectionsView(ctx, {
+			await show(ctx, {
 				snapshot: buildFallbackInjectionsSnapshot({
 					systemPrompt: ctx.getSystemPrompt(),
 					options: ctx.getSystemPromptOptions(),
@@ -78,7 +80,7 @@ export default function (pi: ExtensionAPI, snapshots = new SnapshotStore(), conf
 			return;
 		}
 		const snapshot = latest.snapshot;
-		await showInjectionsView(ctx, {
+		await show(ctx, {
 			snapshot: buildInjectionsSnapshot({
 				snapshot,
 				entries: ctx.sessionManager.getEntries(),
@@ -117,7 +119,8 @@ export default function (pi: ExtensionAPI, snapshots = new SnapshotStore(), conf
 			activeToolNames: pi.getActiveTools(),
 			promptSources: collectPromptSources(pi.getAllTools(), pi.getCommands()),
 		});
-		await showUsageView(ctx, {
+		const show = ctx.mode === "rpc" ? showRpcUsage : showUsageView;
+		await show(ctx, {
 			usage: computeUsage({
 				snapshot: current,
 				messages,
@@ -155,8 +158,8 @@ export default function (pi: ExtensionAPI, snapshots = new SnapshotStore(), conf
 				reportConfigCreation(ctx, createDefaultConfigFile());
 				return;
 			}
-			if (ctx.mode !== "tui") {
-				reportTuiOnly(ctx, command.view);
+			if (ctx.mode !== "tui" && ctx.mode !== "rpc") {
+				reportUnsupportedMode(ctx, command.view);
 				return;
 			}
 			if (compaction.isActive) {

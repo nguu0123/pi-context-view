@@ -81,8 +81,8 @@ flowchart TD
   ProbeFilter stays active even when no probe runs: sessions keep probe
   messages from earlier runtimes.
 - **Run modes.** Capture, the probe layer, and the store work in every run
-  mode and without any consumer. The command applies the TUI-only guard of
-  both views; ProbeTrigger has none.
+  mode and without any consumer. The command allows TUI overlays and RPC
+  metadata reports; ProbeTrigger has no mode guard.
 - **Wiring.** Each layer's module exports its state and a `register*()`
   function with its Pi handlers. `src/index.ts` creates the layers, calls those
   functions, registers the command, and clears the store on `session_shutdown`.
@@ -132,6 +132,7 @@ flowchart TD
 | `src/usage.ts`               | Classify messages; build usage totals and previews.                                                           |
 | `src/model.ts`               | Define types, ownership, hierarchy, and grouping.                                                             |
 | `src/model-identity.ts`      | Same-model check of Pi's thinking replay; resolve the next request's model for Usage.                         |
+| `src/rpc.ts`                 | Render bounded, sanitized usage and injection metadata as RPC notifications; never include raw previews.     |
 | `src/text.ts`                | Sanitize dynamic text before terminal display.                                                                |
 | `src/ui/`                    | Handle navigation, layout, previews, and fullscreen rendering.                                                |
 | `test/harness/`              | Mock provider, settings stub, and command runner for tests; see [validation.md](architecture/validation.md).  |

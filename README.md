@@ -1,5 +1,7 @@
 # pi-context-view
 
+Fork of [dimk90/pi-context-view](https://github.com/dimk90/pi-context-view) with RPC text reports for clients such as T3 Code.
+
 <p align="center">
   <img width="456" src="https://media.githubusercontent.com/media/dimk90/pi-context-view/9a9f9f4fafaa09c77759485d53c42f8694650755/doc/images/pi-context-view.png">
   <br>
@@ -35,6 +37,24 @@ injected by other extensions.
   defaults, useful for
   [customization](https://github.com/dimk90/pi-context-view#customization).
 
+## RPC clients (including T3 Code)
+
+`/context` and `/context usage` return a text report with reported usage,
+estimated category totals, context capacity, and the auto-compaction reserve.
+`/context injections` returns source and item labels with token estimates.
+Both commands use Pi's `extension_ui_request` notification protocol; the client
+must display `notify` messages. T3 Code displays them as system notices.
+
+RPC uses the same snapshots, fallback estimates, compaction guards, and
+`autoProbing` setting as the terminal views. Reports identify missing captures
+and incomplete payload comparisons. They contain metadata only: no raw prompts,
+message previews, tool arguments, images, or signatures. Labels and report size
+are bounded. Reports do not add Pi session messages or model context, though
+clients may retain the notifications in their own history.
+
+The graphical map, raw previews, search, and clipboard actions remain TUI-only.
+Print and JSON modes do not open either view. `/context config` works in every mode.
+
 ## Demo: `/context`
 
 See what fills your context, for example, what survives compaction:
@@ -61,7 +81,8 @@ Zoom in for a more detailed breakdown of large context windows, such as
 ## Install
 
 ```bash
-pi install npm:pi-context-view
+pi remove npm:pi-context-view
+pi install git:github.com/nguu0123/pi-context-view@develop
 ```
 
 ## Customization

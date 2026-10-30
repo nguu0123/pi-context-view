@@ -73,10 +73,10 @@ function createTuiContext(onWaitForIdle: () => void = () => undefined): {
 	return { context, notified, opened: () => viewOpened };
 }
 
-for (const view of ["usage", "injections"] satisfies ContextView[]) {
+for (const mode of ["tui", "rpc"] as const) for (const view of ["usage", "injections"] satisfies ContextView[]) {
 	const refusal = { message: `/context ${view} is unavailable while compaction is in progress.`, type: "warning" };
 
-	test(`/context ${view} refuses at once while compaction is active`, async () => {
+	test(`${mode}: /context ${view} refuses at once while compaction is active`, async () => {
 		const extension = registerWithFakePi();
 		extension.emit({ type: "session_before_compact", signal: new AbortController().signal });
 		let waitedForIdle = false;
@@ -84,20 +84,20 @@ for (const view of ["usage", "injections"] satisfies ContextView[]) {
 			waitedForIdle = true;
 		});
 
-		await extension.runCommand(view, context);
+		await extension.runCommand(view, { ...context, mode });
 
 		assert.deepEqual(notified, [refusal]);
 		assert.equal(opened(), false, "no view opens on a projection about to be replaced");
 		assert.equal(waitedForIdle, false, "the refusal must not wait for compaction to finish");
 	});
 
-	test(`/context ${view} refuses when compaction starts while waiting for idle`, async () => {
+	test(`${mode}: /context ${view} refuses when compaction starts while waiting for idle`, async () => {
 		const extension = registerWithFakePi();
 		const { context, notified, opened } = createTuiContext(() => {
 			extension.emit({ type: "session_before_compact", signal: new AbortController().signal });
 		});
 
-		await extension.runCommand(view, context);
+		await extension.runCommand(view, { ...context, mode });
 
 		assert.deepEqual(notified, [refusal], "the refusal replaces the degraded fallback");
 		assert.equal(opened(), false);

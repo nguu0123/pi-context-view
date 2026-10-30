@@ -38,8 +38,11 @@ or awaits a child's exit before the hook that removes the directory it uses.
 `pnpm test` does not run them, and `pnpm check` only typechecks them. Check
 demo changes by running the launcher, as
 [demo-injections.md](../../scripts/demo-injections.md) describes.
-Probe cases that open a view need TUI
-mode: run them in a real PTY as the `pi-extension` skill describes.
+Graphical probe cases need TUI mode: run them in a real PTY as the
+`pi-extension` skill describes. `rpc.test.ts` runs the actual Pi RPC subprocess
+against the loopback provider. It checks cold probes, both commands, known
+usage counts, disabled probing, and the absence of raw previews or report
+entries in Pi's session. `rpc-report.test.ts` checks report bounds and sanitization.
 
 ## Validation Matrix
 

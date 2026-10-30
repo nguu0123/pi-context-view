@@ -35,6 +35,14 @@ Capture message content, not the whole message object:
 This extraction does not change source messages, baseline matching, or token
 estimates.
 
+### RPC Reports
+
+An explicit `/context` command in RPC mode sends token counts and sanitized,
+bounded labels through `ctx.ui.notify()`. It never sends raw prompt text,
+message previews, tool arguments, images, or provider signatures. It adds no
+Pi session entries or model messages. A client such as T3 Code may save the
+metadata notification in its own history.
+
 ### Images and Provider Signatures
 
 Never retain or render captured image payloads. Before serializing a preview,
@@ -110,8 +118,8 @@ changes.
 `/context config` is the create-only action. It writes every default with one
 atomic `O_EXCL` create and never overwrites or modifies an existing path. It
 works in every run mode on a
-[supported Pi](pi-requests.md#supported-pi-versions). Only the views require
-`ctx.mode === "tui"`.
+[supported Pi](pi-requests.md#supported-pi-versions). Graphical views require
+`ctx.mode === "tui"`; RPC mode returns metadata-only text reports.
 
 Any later action that updates an existing file must debounce writes and merge
 over a fresh read, preserving concurrent edits and unknown keys.

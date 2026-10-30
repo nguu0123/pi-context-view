@@ -7,11 +7,11 @@
 	"author": "Dmitry Makarov",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/dimk90/pi-context-view.git"
+		"url": "git+https://github.com/nguu0123/pi-context-view.git"
 	},
-	"homepage": "https://github.com/dimk90/pi-context-view#readme",
+	"homepage": "https://github.com/nguu0123/pi-context-view#readme",
 	"bugs": {
-		"url": "https://github.com/dimk90/pi-context-view/issues"
+		"url": "https://github.com/nguu0123/pi-context-view/issues"
 	},
 	"keywords": [
 		"pi",
