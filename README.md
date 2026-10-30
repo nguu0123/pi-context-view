@@ -1,6 +1,6 @@
 # pi-context-view
 
-Fork of [dimk90/pi-context-view](https://github.com/dimk90/pi-context-view) with RPC text reports for clients such as T3 Code.
+Fork of [dimk90/pi-context-view](https://github.com/dimk90/pi-context-view) with RPC reports and interactive drill-down for clients such as T3 Code.
 
 <p align="center">
   <img width="456" src="https://media.githubusercontent.com/media/dimk90/pi-context-view/9a9f9f4fafaa09c77759485d53c42f8694650755/doc/images/pi-context-view.png">
@@ -42,17 +42,23 @@ injected by other extensions.
 `/context` and `/context usage` return a text report with reported usage,
 estimated category totals, context capacity, and the auto-compaction reserve.
 `/context injections` returns source and item labels with token estimates.
-Both commands use Pi's `extension_ui_request` notification protocol; the client
-must display `notify` messages. T3 Code displays them as system notices.
+Both commands first send a metadata notification, then open a selection menu.
+Choose a category or source, drill into individual items and sections, and use
+Back to return. Large lists have Previous/Next page controls. Cancel or Close
+exits. Clients must support Pi's `notify`, `select`, and `editor` RPC methods;
+T3 Code displays these as system notices and input dialogs.
 
 RPC uses the same snapshots, fallback estimates, compaction guards, and
 `autoProbing` setting as the terminal views. Reports identify missing captures
-and incomplete payload comparisons. They contain metadata only: no raw prompts,
-message previews, tool arguments, images, or signatures. Labels and report size
-are bounded. Reports do not add Pi session messages or model context, though
-clients may retain the notifications in their own history.
+and incomplete payload comparisons. Notifications and menus contain metadata
+only. To send content to the client, explicitly choose **Preview text (client
+may retain it)**. The multiline preview dialog discards any edits and returns
+to the item list. Previews are sanitized and capped at 40,000 characters; image
+payloads and opaque provider signatures remain excluded. Labels and menu size
+are also bounded. No navigation or preview adds Pi session entries or model
+context, but clients may retain notifications and preview text in their history.
 
-The graphical map, raw previews, search, and clipboard actions remain TUI-only.
+The graphical map, terminal search, diff rendering, and clipboard actions remain TUI-only.
 Print and JSON modes do not open either view. `/context config` works in every mode.
 
 ## Demo: `/context`

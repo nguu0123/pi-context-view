@@ -1,6 +1,7 @@
-/** RPC clients receive bounded metadata reports, never raw prompt or message previews. */
+/** RPC summaries stay metadata-only; interactive dialogs provide opt-in previews. */
 import type { ExtensionCommandContext } from "@earendil-works/pi-coding-agent";
 
+import { browseRpcInjections, browseRpcUsage } from "./rpc-browser.ts";
 import { normalizeInlineText } from "./text.ts";
 import type { InjectionsViewInput } from "./ui/injections-view.ts";
 import type { UsageViewInput } from "./ui/usage-view.ts";
@@ -28,9 +29,10 @@ export async function showRpcUsage(context: ExtensionCommandContext, input: Usag
 	lines.push("", "Estimated categories (tokens):");
 	for (const category of usage.categories) lines.push(`${label(category.label)}: ${tokens(category.tokens)}`);
 	showReport(context, lines, input);
+	await browseRpcUsage(context, usage);
 }
 
-/** Show source and item metadata only; RPC has no raw-preview or clipboard action. */
+/** Report metadata before offering source/item navigation and opt-in previews. */
 export async function showRpcInjections(context: ExtensionCommandContext, input: InjectionsViewInput): Promise<void> {
 	const lines = ["Context injections", `Estimated total: ${tokens(input.snapshot.totalTokens)} tokens`];
 	if (input.probe) lines.push("Source: silent probe, not a dispatched request.");
@@ -41,14 +43,16 @@ export async function showRpcInjections(context: ExtensionCommandContext, input:
 		lines.push(`${label(group.source.label)}: ${tokens(group.totalTokens)}`);
 		for (const item of group.items) {
 			if (lines.length >= MAX_ROWS) {
-				lines.push("Further contributions omitted; use the TUI to inspect them.");
+				lines.push("Further contributions omitted from summary; browse the menus to inspect them.");
 				showReport(context, lines, input);
+				await browseRpcInjections(context, input.snapshot);
 				return;
 			}
 			lines.push(`  ${label(item.label)}: ${tokens(item.tokens)}${item.change ? ` [${item.change}]` : ""}${item.diffOnly ? " (counted in System Prompt)" : ""}`);
 		}
 	}
 	showReport(context, lines, input);
+	await browseRpcInjections(context, input.snapshot);
 }
 
 /** Reports stay outside the saved session and subsequent model context. */

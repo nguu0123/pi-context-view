@@ -41,8 +41,11 @@ demo changes by running the launcher, as
 Graphical probe cases need TUI mode: run them in a real PTY as the
 `pi-extension` skill describes. `rpc.test.ts` runs the actual Pi RPC subprocess
 against the loopback provider. It checks cold probes, both commands, known
-usage counts, disabled probing, and the absence of raw previews or report
-entries in Pi's session. `rpc-report.test.ts` checks report bounds and sanitization.
+usage counts, disabled probing, and actual select/editor responses, including
+U+2028 preview content. It verifies no raw content before opt-in and no session
+entries or model requests from browsing. `rpc-report.test.ts` checks summary
+bounds and sanitization; `rpc-browser.test.ts` checks nested navigation,
+pagination/Back identity, cancellation, discarded edits, and preview bounds.
 
 ## Validation Matrix
 

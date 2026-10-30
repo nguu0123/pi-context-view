@@ -21,9 +21,12 @@ While compaction is active, both views refuse to open; the command checks
 before and after resolving ([preconditions](probe.md#preconditions-failures-and-fallback)).
 The command supports TUI overlays and RPC text reports, and refuses other
 modes. `openInjections()` and `openUsage()` receive the same resolution result.
-RPC reports use the same computed inputs but expose only bounded metadata,
-through `ctx.ui.notify()`. They never open a terminal component or include raw
-preview fields. No report is appended to Pi's session or model context.
+RPC uses the same computed inputs for bounded metadata notifications and paged
+selection menus. Categories, entries, child items, and sections remain navigable
+without exposing raw content. Only the explicit Preview action sends sanitized,
+capped text to the client's editor dialog, with a client-retention warning.
+Editor responses are ignored. Neither navigation nor previews append Pi
+session entries or model messages. RPC never opens a terminal component.
 
 ## Injections
 

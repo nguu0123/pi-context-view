@@ -8,11 +8,12 @@ show, and persist, and how it loads and writes its configuration.
 ### Raw Text and Message Previews
 
 Keep captured raw content in this process only, and sanitize it before it
-reaches the terminal or the clipboard. This covers request copies, payload
+reaches the terminal, the clipboard, or an explicitly requested RPC preview. This covers request copies, payload
 copies, guard findings, and snapshots alike.
 
 Expose raw content only on an explicit user action: Enter opens a preview, and
-`c` copies through pi's clipboard support. Nothing exposes it automatically:
+`c` copies through pi's clipboard support. RPC has a separate Preview action
+whose label warns that the client may retain the text. Nothing exposes it automatically:
 never log it, include it in notifications, save it with the session, or inject
 it into a later model request. What happens to copied text after that is
 outside this extension.
@@ -38,10 +39,16 @@ estimates.
 ### RPC Reports
 
 An explicit `/context` command in RPC mode sends token counts and sanitized,
-bounded labels through `ctx.ui.notify()`. It never sends raw prompt text,
-message previews, tool arguments, images, or provider signatures. It adds no
-Pi session entries or model messages. A client such as T3 Code may save the
-metadata notification in its own history.
+bounded labels through `ctx.ui.notify()`, then offers paged `ctx.ui.select()`
+menus. Neither notifications nor menus contain raw content. Only choosing
+Preview sends sanitized content to `ctx.ui.editor()`; its action label warns
+about client retention. Preview text is capped, and editor responses are
+discarded. The browser reuses already-redacted preview fields, so image
+payloads and opaque provider signatures stay excluded.
+
+Navigation and previews add no Pi session entries or model messages. A client
+such as T3 Code may save metadata, selected content, or editor responses in its
+own history; this is an explicit privacy difference from the local TUI.
 
 ### Images and Provider Signatures
 
@@ -119,7 +126,7 @@ changes.
 atomic `O_EXCL` create and never overwrites or modifies an existing path. It
 works in every run mode on a
 [supported Pi](pi-requests.md#supported-pi-versions). Graphical views require
-`ctx.mode === "tui"`; RPC mode returns metadata-only text reports.
+`ctx.mode === "tui"`; RPC mode uses metadata reports and menus, with opt-in text previews.
 
 Any later action that updates an existing file must debounce writes and merge
 over a fresh read, preserving concurrent edits and unknown keys.

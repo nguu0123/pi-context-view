@@ -1,12 +1,12 @@
 # pi-context-view
 
-TypeScript pi extension (`src/index.ts`) with two TUI overlays, RPC metadata reports, and one utility command:
+TypeScript pi extension (`src/index.ts`) with two TUI overlays, RPC reports with opt-in previews, and one utility command:
 
 - `/context` or `/context usage` — estimate current context composition.
 - `/context injections` — inspect the latest request's injections with opt-in raw previews.
 - `/context config` — explicitly create the defaults-populated global config file.
 
-The command accepts only `usage`, `injections`, and `config`; keep graphical views in TUI mode, metadata-only reports in RPC mode, and `config` available in every run mode.
+The command accepts only `usage`, `injections`, and `config`; keep graphical views in TUI mode, metadata summaries and interactive drill-down with explicit previews in RPC mode, and `config` available in every run mode.
 
 ## Sources of truth
 
@@ -21,7 +21,7 @@ The command accepts only `usage`, `injections`, and `config`; keep graphical vie
 ## Repository rules
 
 - **Architecture contract.** Preserve the invariants in `doc/ARCHITECTURE.md`; update the owning `doc/architecture/` page with any lifecycle, capture, attribution, or usage behavior change.
-- **Privacy gate.** Keep captured raw content process-local and sanitized; expose it only on explicit user action (Enter preview, `c` copy), never automatically through logs, notifications, session files, or later requests.
+- **Privacy gate.** Keep captured raw content process-local until an explicit user action, and sanitize it before exposure (Enter preview, `c` copy, or RPC Preview after a client-retention warning), never automatically through logs, notifications, session files, or later requests.
 - **Module boundaries.** Keep `src/index.ts` to wiring: create the layers, call their `register*()` functions in the required order, and register the command. Put independently testable state, measurement, and rendering behavior in focused modules under `src/`, `src/capture/`, `src/probe/`, and `src/ui/`.
 - **Command contract.** Keep parsing, completions, registration text, README usage, and command tests synchronized whenever the `/context` grammar or mode guard changes.
 - **Config contract.** Keep user-configurable state override-only: defaults in code, no auto-created or default-backfilled config file, invalid entries degrading to defaults. `doc/architecture/privacy.md` holds the full load and write contract.

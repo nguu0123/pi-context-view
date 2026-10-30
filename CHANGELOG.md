@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### New
+* `[rpc]` Browse categories, items, and sections with opt-in text previews.
 * `[rpc]` Report context usage and injection metadata in RPC clients such as T3 Code.
 * `[views]` Add `c` to copy the highlighted row or open preview to the clipboard ([#16](https://github.com/dimk90/pi-context-view/pull/16) by @felipezan).
 

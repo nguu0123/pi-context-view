@@ -8,7 +8,7 @@ import { showRpcInjections, showRpcUsage } from "../src/rpc.ts";
 
 function recorder() {
 	const messages: string[] = [];
-	const context = { ui: { notify: (message: string) => messages.push(message) } } as unknown as ExtensionCommandContext;
+	const context = { ui: { notify: (message: string) => messages.push(message), select: async () => undefined } } as unknown as ExtensionCommandContext;
 	return { context, messages };
 }
 

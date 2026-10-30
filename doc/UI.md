@@ -2,9 +2,11 @@
 
 Canonical design decisions for `pi-context-view`, not a transcript of its current
 screens. Usage and Injections are separate fullscreen TUI overlays, with no tab
-state. RPC clients receive metadata-only text reports through notifications;
-these do not render terminal components or expose raw previews. `/context config`
-opens no overlay and remains available in every mode.
+state. RPC clients receive metadata notifications and paged selection dialogs.
+They can drill into categories, items, and sections, use Back, and opt into a
+sanitized text preview. The Preview action warns that clients may retain the
+text. Preview edits are ignored. Graphical maps and terminal-specific actions
+remain in the TUI. `/context config` opens no overlay and works in every mode.
 
 | Document                             | Covers                                                                |
 | ------------------------------------ | --------------------------------------------------------------------- |
